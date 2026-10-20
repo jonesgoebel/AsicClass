@@ -193,7 +193,6 @@ time_info MAPPED
 #######################################################################################################
 ## Optimize Netlist
 #######################################################################################################
-
 syn_opt
 #-physical
 #write_snapshot -outdir $_REPORTS_PATH -tag syn_opt_incr
@@ -209,7 +208,6 @@ time_info OPT
 #######################################################################################################
 ## Optimize Netlist
 #######################################################################################################
-
 ## Uncomment to remove assigns & insert tiehilo cells during Incremental synthesis
 ##set_attribute remove_assigns true /
 ##set_remove_assign_options -buffer_or_inverter <libcell> -design <design|subdesign>
@@ -250,7 +248,6 @@ time_info FINAL
 puts "============================"
 puts "Synthesis Finished ........."
 puts "============================"
-
 
 report_clocks
 report_gates -power

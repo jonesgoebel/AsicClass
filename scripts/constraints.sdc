@@ -2,20 +2,31 @@
 #Constraints file
 #$DESIGN -> must be set by before
 ##################
+set_time_unit -picoseconds
+set_load_unit -picofarads
 
-#-period em ps , "CLOCK" is the clock name in top design
-#15MHz => 66667ps; 50MHz => 20000 ps; 100MHz => 10000ps; 150MHZ => 6666ps; 200MHz => 5000ps;  400MHz => 2500ps
+#-period em ps , "clock" is the clock name in top design
+#15MHz => 66667ps; 50MHz => 20000ps; 100MHz => 10000ps; 150MHZ => 6666ps; 200MHz => 5000ps;  400MHz => 2500ps
+define_clock -period 20000 -name clock [get_ports clock]
 
-define_clock -period 10000 -rise 20 -fall 80 -name clock [find / -port clock] 
+##################
+set_clock_uncertainty -setup 80 [get_clocks clock]
+set_clock_uncertainty -hold 40  [get_clocks clock]
 
-set_clock_uncertainty -setup -hold  0.2 clock 
+set_input_delay 4000  -clock clock  [remove_from_collection [all_inputs] [get_ports clock]]
+set_output_delay 3000 -clock clock [all_outputs]
 
-external_delay -clock [find / -clock clock] -output 10 [all_outputs]
-external_delay -clock [find / -clock clock] -input 10 [all_inputs]
+set_clock_transition 50 -rise [get_clocks clock]
+set_clock_transition 40 -fall [get_clocks clock]
 
+set_clock_latency 100 -source [get_clocks clock]
+set_clock_latency 200        [get_clocks clock]
 
+set_input_transition 150 [remove_from_collection [all_inputs] clock]
+
+set_max_fanout 15 [current_design]
 #capacitancia
-#set_load 0.32 [all_outputs]
+set_load 0.32 [all_outputs]
 #set_load -min 0.0014 [all_outputs]
 #set_load -max 0.32 [all_outputs]
 
