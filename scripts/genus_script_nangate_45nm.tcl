@@ -29,8 +29,8 @@ set_db lib_search_path  {. \
 set_db script_search_path {. \
    ../Scripts/ \
 }
-set_db hdl_search_path {../rtl} 
 
+set_db hdl_search_path {../rtl} 
 
 ##Uncomment and specify machine names to enable super-threading.
 ##set_attribute super_thread_servers {<machine names>} /
@@ -66,7 +66,7 @@ set_db lp_power_unit mW
 ###############################################################
 #set_db lp_insert_clock_gating true 
 
-#set_db auto_ungroup none 
+set_db auto_ungroup none 
 #set_db auto_ungroup_min_effort high 
 
 #set_db control_logic_optimization advanced
@@ -226,7 +226,6 @@ syn_opt -incremental
 #################################
 ### write_do_lec
 #################################
-
 report_clock_gating > $_REPORTS_PATH/${DESIGN}_clockgating.rpt
 report_power -depth 0 > $_REPORTS_PATH/${DESIGN}_power.rpt
 report_gates -power > $_REPORTS_PATH/${DESIGN}_gates_power.rpt
@@ -242,7 +241,6 @@ write_sdc > ${_OUTPUTS_PATH}/${DESIGN}_m.sdc
 #################################
 ### final_reports
 #################################
-
 puts "Final Runtime & Memory."
 time_info FINAL
 puts "============================"
