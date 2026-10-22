@@ -1,4 +1,4 @@
-#### Template Script for RTL->Gate-Level Flow (generated from GENUS 17.22-s017_1) 
+#### Template Script for RTL->Gate-Level Flow
 
 if {[file exists /proc/cpuinfo]} {
   sh grep "model name" /proc/cpuinfo
@@ -10,7 +10,6 @@ puts "Hostname : [info hostname]"
 ##############################################################################
 ## Preset global variables and attributes
 ##############################################################################
-
 set DESIGN idct8_multi
 
 set GEN_EFF high
@@ -88,15 +87,6 @@ set_db library {NangateOpenCellLibrary_typical_ecsm.lib}
 #Wire Delay Estimation  
 set_db lef_library {NangateOpenCellLibrary.lef}
 
-
-## Power root attributes
-#set_attribute lp_clock_gating_prefix <string> /
-#set_attribute lp_power_analysis_effort <high> /
-#set_attribute lp_power_unit mW /
-#set_attribute lp_toggle_rate_unit /ns /
-## The attribute has been set to default value "medium"
-## you can try setting it to high to explore MVT QoR for low power optimization
-
 ####################################################################
 ## Load Design
 ####################################################################
@@ -119,76 +109,28 @@ check_design -unresolved
 read_sdc ../scripts/constraints.sdc
 puts "The number of exceptions is [llength [vfind "design:$DESIGN" -exception *]]"
 
-
-#set_attribute force_wireload <wireload name> "/designs/$DESIGN"
-
-#if {![file exists ${_LOG_PATH}]} {
-#  file mkdir ${_LOG_PATH}
-#  puts "Creating directory ${_LOG_PATH}"
-#}
-#
-#if {![file exists ${_OUTPUTS_PATH}]} {
-#  file mkdir ${_OUTPUTS_PATH}
-#  puts "Creating directory ${_OUTPUTS_PATH}"
-#}
-#
-#if {![file exists ${_REPORTS_PATH}]} {
-#  file mkdir ${_REPORTS_PATH}
-#  puts "Creating directory ${_REPORTS_PATH}"
-#}
-
 report timing -lint
 check_timing_intent
-
-#####################################################################################
-#### Retime
-#####################################################################################
-#set_db dp_rewriting advanced
-#retime -prepare -min_delay -effort high $DESIGN
-#set rt_subds {mysub1  mysub2 mysub3}
-#foreach subd $rt_subds {
-#  set_attribute retime true $subd
-  ####Uncomment to prevent registers from being moved across the subdesign boundaries
-  ##set_attribute retime_hard_region true $subd 
-#}
-####Setting 'retime' attribute on the top-level as shown below 
-####is not recommended due to possible verification/ECO issues unless for very small designs
-#set_attribute retime true   "/designs/$DESIGN"
-
-####set dont_retime on registers which should not be retimed
-#set dont_rt_flops "myflop1 myflop2 myflop3 .."
-#foreach rtf $rt_flops {
-#  set_attribute dont_retime true $rtf
-#}
-# Enable verification flow 
-#set_db retime_verification_flow true 
-#set_db "designs:$DESIGN" .retime true
 
 ####################################################################################################
 ## Synthesizing to generic 
 ####################################################################################################
 set_db syn_generic_effort $GEN_EFF 
-#syn_generic
+
 syn_generic 
+
 puts "Runtime & Memory after 'syn_generic'"
 time_info GENERIC
-#write_snapshot -outdir $_REPORTS_PATH -tag generic
-#report datapath > $_REPORTS_PATH/generic/${DESIGN}_datapath.rpt
-#report_summary -outdir $_REPORTS_PATH
 
 ####################################################################################################
 ## Synthesizing to gates
 ####################################################################################################
-
 ## Add '-auto_identify_shift_registers' to 'syn_map' to automatically 
 ## identify functional shift register segments. Not applicable for n2n flow.
 set_db syn_map_effort $MAP_OPT_EFF 
 syn_map 
 puts "Runtime & Memory after 'syn_map'"
 time_info MAPPED
-#write_snapshot -outdir $_REPORTS_PATH -tag map
-#report_summary -outdir $_REPORTS_PATH
-#report datapath > $_REPORTS_PATH/map/${DESIGN}_datapath.rpt
 
 #######################################################################################################
 ## Optimize Netlist
@@ -222,22 +164,6 @@ syn_opt -incremental
 #puts "Runtime & Memory after 'syn_opt'"
 #time_info INCREMENTAL_POST_SCAN_CHAINS
 
-
-#################################
-### write_do_lec
-#################################
-report_clock_gating > $_REPORTS_PATH/${DESIGN}_clockgating.rpt
-report_power -depth 0 > $_REPORTS_PATH/${DESIGN}_power.rpt
-report_gates -power > $_REPORTS_PATH/${DESIGN}_gates_power.rpt
-
-report_dp > $_REPORTS_PATH/${DESIGN}_datapath_incr.rpt
-report_messages > $_REPORTS_PATH/${DESIGN}_messages.rpt
-write_snapshot -outdir $_REPORTS_PATH -tag final
-report_summary -directory $_REPORTS_PATH
-write_hdl  > ${_OUTPUTS_PATH}/${DESIGN}_m.v
-## write_script > ${_OUTPUTS_PATH}/${DESIGN}_m.script
-write_sdc > ${_OUTPUTS_PATH}/${DESIGN}_m.sdc
-
 #################################
 ### final_reports
 #################################
@@ -255,8 +181,6 @@ report area -depth 1 -normalize_with_gate NAND2_X1
 #report_power -unit mW -format %.3f -levels 1 -by_hierarchy -cols {cells pct_cells leakage internal switching total level hier} -by_hierarchy -sort_by total -header
 report_power -unit mW -format %.3f -levels 1 -by_hierarchy -cols {cells pct_cells leakage internal switching total level hier} -by_hierarchy -sort_by total
 
-
 report qor
 
-##########################
 quit
