@@ -8,7 +8,7 @@ set_load_unit -picofarads
 #-period em ps , "clock" is the clock name in top design
 #15MHz => 66667ps; 50MHz => 20000ps; 100MHz => 10000ps; 150MHZ => 6666ps; 200MHz => 5000ps;  400MHz => 2500ps
 set Clock_Design "clock"
-set Clock_Period 2500
+set Clock_Period 20000
 
 ##################
 define_clock -period $Clock_Period -name $Clock_Design [get_ports $Clock_Design]
