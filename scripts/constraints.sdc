@@ -16,8 +16,8 @@ define_clock -period $Clock_Period -name $Clock_Design [get_ports $Clock_Design]
 set_clock_uncertainty -setup 80 [get_clocks $Clock_Design]
 set_clock_uncertainty -hold 40  [get_clocks $Clock_Design]
 
-set_input_delay 4000  -clock $Clock_Design  [remove_from_collection [all_inputs] [get_ports $Clock_Design]]
-set_output_delay 3000 -clock $Clock_Design [all_outputs]
+set_input_delay 400  -clock $Clock_Design  [remove_from_collection [all_inputs] [get_ports $Clock_Design]]
+set_output_delay 300 -clock $Clock_Design [all_outputs]
 
 set_clock_transition 50 -rise [get_clocks $Clock_Design]
 set_clock_transition 40 -fall [get_clocks $Clock_Design]
